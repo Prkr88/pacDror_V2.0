@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Bazoret Man</title>
+
+    <META NAME="keywords" CONTENT="pacman, game, fun">
+
+    <META NAME="description" CONTENT="Hello and welcome to Bazoret Man Game.">
+
+    <link rel="shortcut icon" href="images\\icon2.jpeg">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+
+    <link rel='stylesheet' id='mlestrnge-googlefont-css' href='https://fonts.googleapis.com/css?family=Varela+Round'
+          type='text/css' media='all'/>
+
+    <!--    <link rel="stylesheet" media="screen and (min-device-width: 1800px)" href="style.css" />-->
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+          integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+    <!-- Bootstrap core CSS additions -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+
+
+    
+    </div>
+    <div class="container">
+                <div class="row centered">
+                        <div class="col-sm-4 col-md-2">
+                            <span style="color:darkgreen;font-weight:bold">Hi <span id="display_uname"> </span> </span>
+                        </div>
+                        <div class="col-sm-4 col-md-2">
+                            <span style="color:darkgreen;font-weight:bold">LIVES:</span>
+                            <img src="images\\pacDrorAni_right1.svg" id="life1" style="display:none;height: 25px;width: 25px;">
+                            <img src="images\\pacDrorAni_right1.svg" id="life2" style="display:none;height: 25px;width: 25px;">
+                            <img src="images\\pacDrorAni_right1.svg" id="life3" style="display:none;height: 25px;width: 25px;">
+                        </div>
+                        <div class="col-sm-4 col-md-2">
+                            <span style="border-style:hidden;color:darkblue;font-weight:bold">SCORE:</span>
+                            <label> <input id="lblScore" type="text" size="6"> </label>
+                        </div>
+                        <div class="col-sm-4 col-md-2">
+                            <span style="border-style:hidden;color:darkred;font-weight:bold">TIME:</span>
+                            <label> <input id="lblTime" type="text" size="6"> </label>
+                        </div>
+                        <div class="col-sm-4 col-md-2">
+                            <button id="btn_restart" type="button" class="btn-restart">Restart Game</button>
+                        </div>
+                
+                
+            
+            <!--             <canvas id="canvas"></canvas>-->
+        </div>
+        <div class="row centered">
+                <canvas id="canvas" height="660" width="600"></canvas>
+        </div>
+    </div>
+
+    <script id="game_script" type="text/javascript">
+
+        // var d_left1 = new Image();
+        // d_left1.src = "images/pacDrorAni_left1.svg";
+
+        /**************--------------- load images --------------------*****************/
+            //-------------dror right--------------//
+        var d_right1 = new Image();
+        d_right1.src = "images/pacDrorAni_right1.svg";
+        // while(!d_right1.onload)
+        var d_right2 = new Image();
+        d_right2.src = "images/pacDrorAni_right2.svg";
+        var d_right3 = new Image();
+        d_right3.src = "images/pacDrorAni_right3.svg";
+        var d_right4 = new Image();
+        d_right4.src = "images/pacDrorAni_right4.svg";
+        //-------------dror left--------------//
+        var d_left1 = new Image();
+        d_left1.src = "images/pacDrorAni_left1.svg";
+        var d_left2 = new Image();
+        d_left2.src = "images/pacDrorAni_left2.svg";
+        var d_left3 = new Image();
+        d_left3.src = "images/pacDrorAni_left3.svg";
+        var d_left4 = new Image();
+        d_left4.src = "images/pacDrorAni_left4.svg";
+        //-------------dror up--------------//
+        var d_up1 = new Image();
+        d_up1.src = "images/pacDrorAni_up1.svg";
+        var d_up2 = new Image();
+        d_up2.src = "images/pacDrorAni_up2.svg";
+        var d_up3 = new Image();
+        d_up3.src = "images/pacDrorAni_up3.svg";
+        var d_up4 = new Image();
+        d_up4.src = "images/pacDrorAni_up4.svg";
+        //-------------dror down--------------//
+        var d_down1 = new Image();
+        d_down1.src = "images/pacDrorAni_down1.svg";
+        var d_down2 = new Image();
+        d_down2.src = "images/pacDrorAni_down2.svg";
+        var d_down3 = new Image();
+        d_down3.src = "images/pacDrorAni_down3.svg";
+        var d_down4 = new Image();
+        d_down4.src = "images/pacDrorAni_down4.svg";
+        //-------------Haim Ghosts--------------//
+        var g_1 = new Image();
+        g_1.src = "images/Haim_1.svg";
+        var g_2 = new Image();
+        g_2.src = "images/Haim_2.svg";
+        var g_3 = new Image();
+        g_3.src = "images/Haim_3.svg";
+        //-------------init animation arrays--------------//
+        var DrorRight = [d_right1, d_right2, d_right3, d_right4];
+        var DrorLeft = [d_left1, d_left2, d_left3, d_left4];
+        var DrorUp = [d_up1, d_up2, d_up3, d_up4];
+        var DrorDown = [d_down1, d_down2, d_down3, d_down4];
+
+        //-------------Game environment variable --------------//
+        var direction;
+        var wall = new Image();
+        wall.src = "images/wall.svg";
+        var floor = new Image();
+        floor.src = "images/floor.svg";
+        var food_simple = new Image();
+        food_simple.src = "images/food_simple.svg";
+        var diamond = new Image();
+        diamond.src = "images/diamond.svg";
+        var food_special = new Image();
+        food_special.src = "images/food_special.svg";
+        var skullFig = new Image();
+        skullFig.src = "images/skull.svg";
+        var victoryFig = new Image();
+        victoryFig.src = "images/victory.svg";
+        var gameOverFig = new Image();
+        gameOverFig.src = "images/GameOver.svg";
+        var num1 = new Image();
+        num1.src = "images/num_1.svg";
+        var num2 = new Image();
+        num2.src = "images/num_2.svg";
+        var num3 = new Image();
+        num3.src = "images/num_3.svg";
+        var canDoBetter = new Image();
+        canDoBetter.src = "images/canDoBetter.svg";
+        var skull = new Object();
+        var catchedTheSkull_indication = 0;
+        skull.x = 0;
+        skull.y = 0;
+        var skullSpeed = 0;
+        var skullApearanceTime = 0;
+        var skullVisible = 0;
+        var animationSpeed = 0;
+        var animationCounter = 0;
+        var timeLimit = 60;
+        var ballsTheme = "";
+
+        //Game sounds
+        var killed_sound = new Sound("sounds/killed.mp3");
+        var backgroundMusic = new Sound("sounds/BackgroundMusic.mp3");
+        var gameOverSound = new Sound("sounds/gameOver.mp3");
+        var catchedTheSkull = new Sound("sounds/sharvit.mp3");
+        var gameCompleteSound = new Sound("sounds/gameFinished2.mp3");
+        var eatHatzir = new Sound("sounds/eatHatzir.mp3");
+        var tetet = new Sound("sounds/Tetet.mp3");
+        var firstTap = 1;
+        var drorMotionIndex = 2;
+        var drorSpeedController = 0;
+        var drorSpeed = 2;
+        var drorToDraw;
+        var gameOverIndication = 0;
+        var cnv = document.getElementById("canvas");
+        var context = cnv.getContext("2d");
+        var shape = new Object();
+        var board;
+        var foodMap;
+        var tmpBoard;
+        var score = 0;
+        var pacman_remain = 3;
+        var pac_color;
+        var start_time;
+        var time_elapsed = 0;
+        var interval;
+        var SIZE = 30;
+        var BOARD_WIDTH = 19;
+        var BOARD_HEIGHT = 22;
+        var ghost_1 = 5;
+        var ghost_1_path = new Array();
+        var ghost_1_loc = [10, 8];
+        var ghost_1_prevValue = 0;
+        var ghost_2 = 6;
+        var ghost_2_path = new Array();
+        var ghost_2_loc = [10, 9];
+        var ghost_2_prevValue = 0;
+        var ghost_3 = 7;
+        var ghost_3_path = new Array();
+        var ghost_3_loc = [10, 10];
+        var ghost_3_prevValue = 0;
+        var pacmanMoved = 1;
+        var pacmanCurrentLoc = [16, 9];
+        var ghostMoveCounter = 0;
+        var ghostArray = [ghost_1, ghost_2, ghost_3];
+        var ghostNum = 3;  // number of ghosts in game
+        var gameCompleted = 0;
+        var foodCounter = 186;
+        var numBalls_toRemove = 136;
+        var starter = 3;
+        var respan_time = 0;
+        var random_ind = 0;
+        var numBalls = 0;
+        var gameStoped = 0;
+        var inGameWindow = 1;
+        //-------------Keys SetUp Vars --------------//
+        var keyUp_set = 'ArrowUp';
+        var keyDown_set = 'ArrowDown';
+        var keyLeft_set = 'ArrowLeft';
+        var keyRight_set = 'ArrowRight';
+
+        var ghostScanboard_init = board = [
+            [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+            [4, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 4],
+            [4, 4, 4, 4, 0, 4, 4, 4, 0, 4, 0, 4, 4, 4, 0, 4, 4, 4, 4],
+            [4, 0, 4, 4, 0, 4, 4, 4, 0, 4, 0, 4, 4, 4, 0, 4, 4, 0, 4],
+            [4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4],
+            [4, 0, 4, 4, 0, 4, 0, 4, 4, 4, 4, 4, 0, 4, 0, 4, 4, 0, 4],
+            [4, 0, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0, 0, 4],
+            [4, 4, 4, 4, 0, 4, 4, 4, 0, 4, 0, 4, 4, 4, 0, 4, 4, 4, 4],
+            [0, 0, 0, 4, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0, 0],
+            [4, 4, 4, 4, 0, 4, 0, 4, 4, 0, 4, 4, 0, 4, 0, 4, 4, 4, 4],
+            [0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0],
+            [4, 4, 4, 4, 0, 4, 0, 4, 4, 4, 4, 4, 0, 4, 0, 4, 4, 4, 4],
+            [0, 0, 0, 4, 0, 4, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 0, 0, 0],
+            [4, 4, 4, 4, 0, 4, 0, 4, 4, 4, 4, 4, 0, 4, 0, 4, 4, 4, 4],
+            [4, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 4],
+            [4, 0, 4, 4, 0, 4, 4, 4, 0, 4, 0, 4, 4, 4, 0, 4, 4, 0, 4],
+            [4, 4, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 4],
+            [4, 4, 0, 4, 0, 4, 0, 4, 4, 4, 4, 4, 0, 4, 0, 4, 0, 4, 4],
+            [4, 0, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0, 0, 0, 4],
+            [4, 0, 4, 4, 4, 4, 4, 4, 0, 4, 0, 4, 4, 4, 4, 4, 4, 0, 4],
+            [4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4],
+            [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+        ];
+        Start();
+        function initParams() {
+            numBalls = parseInt(document.getElementById("btn_amountBalls").value);
+            if (isNaN(numBalls_toRemove)) {
+                numBalls = 186;
+            }
+            foodCounter = numBalls;
+            numBalls_toRemove = 186 - numBalls;
+            timeLimit = parseInt(document.getElementById("btn_amountTime").value);
+            if (isNaN(timeLimit)) {
+                timeLimit = 60;
+            }
+            var e = document.getElementById("btn_colorBalls");
+            ballsTheme = e.options[e.selectedIndex].value;
+
+            ghostNum = parseInt(document.getElementById("btn_amountGhosts").value);
+            if (isNaN(ghostNum)) {
+                ghostNum = 3;
+            }
+            keyUp_set = document.getElementById("btn_keyup").value;
+            keyDown_set = document.getElementById("btn_keydown").value;
+            keyLeft_set = document.getElementById("btn_keyleft").value;
+            keyRight_set = document.getElementById("btn_keyright").value;
+            if (keyUp_set === "" || keyDown_set === "" || keyLeft_set === "" || keyRight_set === "") {
+                keyUp_set = 'ArrowUp';
+                keyDown_set = 'ArrowDown';
+                keyLeft_set = 'ArrowLeft';
+                keyRight_set = 'ArrowRight';
+            }
+            pacman_remain = 3;
+            time_elapsed = -3;
+            score = 0;
+            starter = 3;
+        }
+        function  game_stop(){
+            inGameWindow = 0;
+            window.clearInterval(interval);
+            backgroundMusic.stop();
+            reset_game();
+        }
+
+        function reset_game() {
+            // initParams();
+            gameStoped = 1;
+            window.clearInterval(interval);
+            score = 0;
+            start_time = new Date();
+            board = [
+                [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+                [4, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 4],
+                [4, 4, 4, 4, 1, 4, 4, 4, 1, 4, 1, 4, 4, 4, 1, 4, 4, 4, 4],
+                [4, 1, 4, 4, 1, 4, 4, 4, 1, 4, 1, 4, 4, 4, 1, 4, 4, 1, 4],
+                [4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4],
+                [4, 1, 4, 4, 1, 4, 1, 4, 4, 4, 4, 4, 1, 4, 1, 4, 4, 1, 4],
+                [4, 1, 1, 1, 1, 4, 1, 1, 1, 4, 1, 1, 1, 4, 1, 1, 1, 1, 4],
+                [4, 4, 4, 4, 1, 4, 4, 4, 1, 4, 1, 4, 4, 4, 1, 4, 4, 4, 4],
+                [0, 0, 0, 4, 1, 4, 1, 1, 1, 1, 1, 1, 1, 4, 1, 4, 0, 0, 0],
+                [4, 4, 4, 4, 1, 4, 1, 4, 4, 0, 4, 4, 1, 4, 1, 4, 4, 4, 4],
+                [1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 4, 1, 1, 1, 1, 1, 1, 1],
+                [4, 4, 4, 4, 1, 4, 1, 4, 4, 4, 4, 4, 1, 4, 1, 4, 4, 4, 4],
+                [0, 0, 0, 4, 1, 4, 1, 1, 1, 1, 1, 1, 1, 4, 1, 4, 0, 0, 0],
+                [4, 4, 4, 4, 1, 4, 1, 4, 4, 4, 4, 4, 1, 4, 1, 4, 4, 4, 4],
+                [4, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 4],
+                [4, 1, 4, 4, 1, 4, 4, 4, 1, 4, 1, 4, 4, 4, 1, 4, 4, 1, 4],
+                [4, 4, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 4, 4],
+                [4, 4, 1, 4, 1, 4, 1, 4, 4, 4, 4, 4, 1, 4, 1, 4, 1, 4, 4],
+                [4, 1, 1, 1, 1, 4, 1, 1, 1, 4, 1, 1, 1, 4, 1, 1, 1, 1, 4],
+                [4, 1, 4, 4, 4, 4, 4, 4, 1, 4, 1, 4, 4, 4, 4, 4, 4, 1, 4],
+                [4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4],
+                [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+            ];
+            foodCounter = numBalls;
+            numBalls_toRemove = 186 - numBalls;
+            gameCompleted = 0;
+            gameOverIndication = 0;
+            ballNum_set();
+            foodSetup();
+            foodMap = copyArray(board);
+            var emptyCell = findRandomEmptyCell(board);
+            board[emptyCell[0]][emptyCell[1]] = 2;
+            board[emptyCell[0]][emptyCell[1]] = 2;
+            shape.i = emptyCell[0];
+            shape.j = emptyCell[1];
+            resetBoard();
+            direction = 0;
+            pacman_remain = 3;
+            time_elapsed = -3;
+            lblTime.value = 0;
+            score = 0;
+            skullVisible = 0;
+            starter = 3;
+            if(inGameWindow ===1){
+                interval = setInterval(UpdatePosition, 50);
+            }
+        }
+
+        function Start() {
+            score = 0;
+            lblTime.value = 0;
+            pac_color = "yellow";
+            var cnt = 100;
+            start_time = new Date();
+            board = [
+                [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+                [4, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 4],
+                [4, 4, 4, 4, 1, 4, 4, 4, 1, 4, 1, 4, 4, 4, 1, 4, 4, 4, 4],
+                [4, 1, 4, 4, 1, 4, 4, 4, 1, 4, 1, 4, 4, 4, 1, 4, 4, 1, 4],
+                [4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4],
+                [4, 1, 4, 4, 1, 4, 1, 4, 4, 4, 4, 4, 1, 4, 1, 4, 4, 1, 4],
+                [4, 1, 1, 1, 1, 4, 1, 1, 1, 4, 1, 1, 1, 4, 1, 1, 1, 1, 4],
+                [4, 4, 4, 4, 1, 4, 4, 4, 1, 4, 1, 4, 4, 4, 1, 4, 4, 4, 4],
+                [0, 0, 0, 4, 1, 4, 1, 1, 1, 1, 1, 1, 1, 4, 1, 4, 0, 0, 0],
+                [4, 4, 4, 4, 1, 4, 1, 4, 4, 0, 4, 4, 1, 4, 1, 4, 4, 4, 4],
+                [1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 4, 1, 1, 1, 1, 1, 1, 1],
+                [4, 4, 4, 4, 1, 4, 1, 4, 4, 4, 4, 4, 1, 4, 1, 4, 4, 4, 4],
+                [0, 0, 0, 4, 1, 4, 1, 1, 1, 1, 1, 1, 1, 4, 1, 4, 0, 0, 0],
+                [4, 4, 4, 4, 1, 4, 1, 4, 4, 4, 4, 4, 1, 4, 1, 4, 4, 4, 4],
+                [4, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 4],
+                [4, 1, 4, 4, 1, 4, 4, 4, 1, 4, 1, 4, 4, 4, 1, 4, 4, 1, 4],
+                [4, 4, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 4, 4],
+                [4, 4, 1, 4, 1, 4, 1, 4, 4, 4, 4, 4, 1, 4, 1, 4, 1, 4, 4],
+                [4, 1, 1, 1, 1, 4, 1, 1, 1, 4, 1, 1, 1, 4, 1, 1, 1, 1, 4],
+                [4, 1, 4, 4, 4, 4, 4, 4, 1, 4, 1, 4, 4, 4, 4, 4, 4, 1, 4],
+                [4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4],
+                [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+            ];
+            ballNum_set();
+            foodSetup();
+            foodMap = copyArray(board);
+            var emptyCell = findRandomEmptyCell(board);
+            board[emptyCell[0]][emptyCell[1]] = 2;
+            shape.i = emptyCell[0];
+            shape.j = emptyCell[1];
+            keysDown = {};
+            console.log(foodCounter);
+            addEventListener("keydown", function (e) {
+                keysDown[e.code] = true;
+            }, false);
+            addEventListener("keyup", function (e) {
+                keysDown[e.code] = false;
+            }, false);
+            interval = setInterval(UpdatePosition, 50);
+            //moveGhost_interval = setInterval(MoveGhost, 10000);
+        }
+
+        function ballNum_set() {
+            while (numBalls_toRemove > 0) {
+                var cell = findRandomEmptyCell(board);
+                board[cell[0]][cell[1]] = 0;
+                numBalls_toRemove--;
+            }
+        }
+
+        function findRandomEmptyCell(board) {
+            var i = Math.floor((Math.random() * BOARD_HEIGHT - 1) + 1);
+            var j = Math.floor((Math.random() * BOARD_WIDTH - 1) + 1);
+            while (board[i][j] !== 1) {
+                i = Math.floor((Math.random() * BOARD_HEIGHT - 1) + 1);
+                j = Math.floor((Math.random() * BOARD_WIDTH - 1) + 1);
+            }
+            return [i, j];
+        }
+
+        /**
+         * @return {number}
+         */
+        function GetKeyPressed() {
+            if (keysDown[keyUp_set]) {
+                drorMotionIndex = 3;
+                direction = 3;
+            }
+            if (keysDown[keyDown_set]) {
+                drorMotionIndex = 4;
+                direction = 4;
+            }
+            if (keysDown[keyLeft_set]) {
+                drorMotionIndex = 1;
+                direction = 1;
+            }
+            if (keysDown[keyRight_set]) {
+                drorMotionIndex = 2;
+                direction = 2;
+            }
+        }
+
+        function Draw() {
+                context.canvas.width = (window.innerWidth);
+                context.canvas.height = (window.innerHeight);
+                if (context.canvas.width <= 1280) {
+                    context.canvas.width *= 1.5;
+                    context.canvas.height *= 1.75;
+                }
+                context.clearRect(0, 0, canvas.width, canvas.height); //clean board
+                lblScore.value = score;
+                if (time_elapsed > 0) {
+                    lblTime.value = time_elapsed;
+                }
+                if (time_elapsed > timeLimit) {
+                    gameOverIndication = 1;
+                }
+                for (var i = 0; i < BOARD_HEIGHT; i++) {
+                    for (var j = 0; j < BOARD_WIDTH; j++) {
+                        var center = new Object();
+                        center.x = j * SIZE;
+                        center.y = i * SIZE;
+                        if (board[i][j] === 2) {
+                            context.fillStyle = "#000000";
+                            context.fillRect(center.x, center.y, SIZE, SIZE);
+                            context.drawImage(floor, center.x, center.y, SIZE, SIZE);
+
+                            if (drorSpeedController === 0) {
+                                if (drorMotionIndex === 2) {
+                                    drorToDraw = DrorRight[animationCounter % 4];
+                                } else if (drorMotionIndex === 1) {
+                                    drorToDraw = DrorLeft[animationCounter % 4];
+                                } else if (drorMotionIndex === 3) {
+                                    drorToDraw = DrorUp[animationCounter % 4];
+                                } else if (drorMotionIndex === 4) {
+                                    drorToDraw = DrorDown[animationCounter % 4];
+                                }
+                                if (animationSpeed % 2 === 0) {
+                                    animationCounter++;
+                                }
+                            }
+                            // context.drawImage(dror,0, 0, SIZE, SIZE);
+                            context.drawImage(drorToDraw, center.x, center.y, SIZE, SIZE);
+
+                        } else if (board[i][j] === 1) {
+                            context.fillStyle = "#000000";
+                            context.fillRect(center.x, center.y, SIZE, SIZE);
+                            context.drawImage(floor, center.x, center.y, SIZE, SIZE);
+                            context.drawImage(food_simple, center.x, center.y, SIZE, SIZE);
+
+                        } else if (board[i][j] === 8) {
+                            context.fillStyle = "#000000";
+                            context.fillRect(center.x, center.y, SIZE, SIZE);
+                            context.drawImage(floor, center.x, center.y, SIZE, SIZE);
+                            context.drawImage(diamond, center.x, center.y, SIZE, SIZE);
+
+                        } else if (board[i][j] === 9) {
+                            context.fillStyle = "#000000";
+                            context.fillRect(center.x, center.y, SIZE, SIZE);
+                            context.drawImage(floor, center.x, center.y, SIZE, SIZE);
+                            context.drawImage(food_special, center.x, center.y, SIZE, SIZE);
+
+                        } else if (board[i][j] === 4) {
+                            context.drawImage(wall, center.x, center.y, SIZE, SIZE);
+                        } else if (board[i][j] === 0) {
+                            context.fillStyle = "#000000";
+                            context.fillRect(center.x, center.y, SIZE, SIZE);
+
+                        } else if (board[i][j] === 5) {
+                            // context.strokeStyle = "0";
+                            context.fillStyle = "#000000";
+                            context.fillRect(center.x, center.y, SIZE, SIZE);
+                            // context.strokeRect(center.x, center.y, SIZE, SIZE);
+                            context.drawImage(floor, center.x, center.y, SIZE, SIZE);
+                            // context.beginPath();
+                            // context.arc(center.x + SIZE / 2, center.y + SIZE / 2, SIZE / 6, 0, 2 * Math.PI); // circle
+                            // context.fillStyle = "#b61381"; //color
+                            // context.fill();
+                            context.drawImage(g_1, center.x, center.y, SIZE, SIZE);
+
+                        } else if (board[i][j] === 6) {
+                            // context.strokeStyle = "0";
+                            context.fillStyle = "#000000";
+                            context.fillRect(center.x, center.y, SIZE, SIZE);
+                            // context.strokeRect(center.x, center.y, SIZE, SIZE);
+                            context.drawImage(floor, center.x, center.y, SIZE, SIZE);
+                            // context.beginPath();
+                            // context.arc(center.x + SIZE / 2, center.y + SIZE / 2, SIZE / 6, 0, 2 * Math.PI); // circle
+                            // context.fillStyle = "#523b2f"; //color
+                            // context.fill();
+                            context.drawImage(g_2, center.x, center.y, SIZE, SIZE);
+
+                        } else if (board[i][j] === 7) {
+                            // context.strokeStyle = "0";
+                            context.fillStyle = "#000000";
+                            context.fillRect(center.x, center.y, SIZE, SIZE);
+                            // context.strokeRect(center.x, center.y, SIZE, SIZE);
+                            context.drawImage(floor, center.x, center.y, SIZE, SIZE);
+                            // context.beginPath();
+                            // context.arc(center.x + SIZE / 2, center.y + SIZE / 2, SIZE / 6, 0, 2 * Math.PI); // circle
+                            // context.fillStyle = "#ca170f"; //color
+                            // context.fill();
+                            context.drawImage(g_3, center.x, center.y, SIZE, SIZE);
+
+
+                        } else if (board[i][j] === 10) {
+                            // context.strokeStyle = "0";
+                            context.fillStyle = "#000000";
+                            context.fillRect(center.x, center.y, SIZE, SIZE);
+                            context.drawImage(floor, center.x, center.y, SIZE, SIZE);
+                            context.drawImage(skullFig, center.x, center.y, SIZE, SIZE);
+
+                        }
+                        if (board[i][j] === 0) {
+                            context.drawImage(floor, center.x, center.y, SIZE, SIZE);
+
+                        }
+                        if (ballsTheme !== "regular") {
+                            var image;
+                            if (ballsTheme === "bloody") {
+                                if (board[i][j] !== 4) {
+                                    image = context.getImageData(center.x, center.y, SIZE, SIZE);
+                                    bloodyColors(image.data);
+                                    context.putImageData(image, center.x, center.y);
+                                }
+                            } else if (ballsTheme === "spooky") {
+                                if (board[i][j] !== 4) {
+                                    image = context.getImageData(center.x, center.y, SIZE, SIZE);
+                                    invertColors(image.data);
+                                    context.putImageData(image, center.x, center.y);
+                                }
+
+                            }
+                        }
+                    }
+                    if (gameCompleted === 1) {
+                        context.drawImage(victoryFig, 80, 80, 450, 450);
+                    }
+                    if (gameOverIndication === 1) {
+                        if (score < 150) {
+                            context.drawImage(canDoBetter, 80, 80, 450, 450);
+                        } else {
+                            context.drawImage(gameOverFig, 80, 80, 450, 450);
+                        }
+
+                    }
+                    var time_now = new Date();
+                    if (starter !== 0 && time_now - respan_time > 1000) {
+                        starter--;
+                        respan_time = new Date();
+                    }
+                    if (starter !== 0) {
+                        if (starter === 3) {
+                            context.drawImage(num3, 80, 80, 450, 450);
+                        } else if (starter === 2) {
+                            context.drawImage(num2, 80, 80, 450, 450);
+                        } else if (starter === 1) {
+                            context.drawImage(num1, 80, 80, 450, 450);
+                        }
+                    }
+
+                }
+
+        }
+
+        function invertColors(data) {
+            for (var i = 0; i < data.length; i += 4) {
+                data[i] = data[i] ^ 255; // Invert Red
+                data[i + 1] = data[i + 1] ^ 255; // Invert Green
+                data[i + 2] = data[i + 2] ^ 255; // Invert Blue
+            }
+        }
+
+        function bloodyColors(data) {
+            for (var i = 0; i < data.length; i += 4) {
+                data[i] = data[i] + 40; // Invert Red
+                data[i + 1] = data[i + 1] - 30; // Invert Green
+                data[i + 2] = data[i + 2] - 30; // Invert Blue
+            }
+        }
+
+        function checkGameOver() {
+            if (ghost_1_loc[0] === shape.i && ghost_1_loc[1] === shape.j) {
+                gameOverIndication = 1;
+            }
+            if (ghost_2_loc[0] === shape.i && ghost_2_loc[1] === shape.j) {
+                gameOverIndication = 1;
+            }
+            if (ghost_3_loc[0] === shape.i && ghost_3_loc[1] === shape.j) {
+                gameOverIndication = 1;
+            }
+        }
+
+
+        function foodSetup() {
+            var randomFood;
+            for (var i = 0; i < BOARD_HEIGHT; i++) {
+                for (var j = 0; j < BOARD_WIDTH; j++) {
+                    if (board[i][j] === 1) {
+                        randomFood = Math.floor((Math.random() * 100 - 1) + 1);
+                        if (randomFood > 90) {
+                            board[i][j] = 9;
+                        } else if (randomFood > 60) {
+                            board[i][j] = 8;
+                        }
+                    }
+                }
+            }
+        }
+        function countFoodInBoard() {
+            var counter =0;
+            for (var i = 0; i < BOARD_HEIGHT; i++) {
+                for (var j = 0; j < BOARD_WIDTH; j++) {
+                    if (board[i][j] === 1 || board[i][j] === 8 || board[i][j] === 9) {
+                        counter++;
+                    }
+                }
+            }
+            if(counter === 0){
+                foodCounter=0;
+            }
+        }
+        function resetBoard() {
+            for (var i = 0; i < BOARD_HEIGHT; i++) {
+                for (var j = 0; j < BOARD_WIDTH; j++) {
+                    if (board[i][j] === 5 || board[i][j] === 6 || board[i][j] === 7 || board[i][j] === 2) {
+                        board[i][j] = foodMap[i][j];
+                    }
+                    if (ghostScanboard_init[i][j] === 2) {
+                        ghostScanboard_init[i][j] = 0;
+                    }
+                }
+                ghost_1_loc = [10, 8];
+                board[10][8] = 5;
+                if (ghostNum > 1) {
+                    ghost_2_loc = [10, 9];
+                    board[10][9] = 6;
+                    if (ghostNum > 2) {
+                        ghost_3_loc = [10, 10];
+                        board[10][10] = 7;
+                    }
+                }
+                ghostScanboard_init[shape.i][shape.j] = 2;
+            }
+        }
+
+        function showSkull() {
+            if (skullVisible === 0) {
+                skullVisible = 1;
+                var pos = findRandomEmptyCell(board);
+                skull.x = pos[0];
+                skull.y = pos[1];
+            }
+            var posMoves = getPossibleMoves(skull.x, skull.y, board);
+            board[skull.x][skull.y] = foodMap[skull.x][skull.y];
+            var randomIndex = Math.floor((Math.random() * posMoves.length - 1) + 1);
+            board[posMoves[randomIndex][0]][posMoves[randomIndex][1]] = 10;
+            skull.x = posMoves[randomIndex][0];
+            skull.y = posMoves[randomIndex][1];
+            if (skull.x === shape.x && skull.y === shape.y) {
+                catchedTheSkull_indication = 1;
+            }
+            // board[nextPos[0][0]][nextPos[0][1]] = 10;
+            // skull.x = nextPos[0][0];
+            // skull.y = nextPos[0][1];
+        }
+
+        function UpdatePosition() {
+            if (starter === 0 && inGameWindow ===1) {
+                backgroundMusic.play();
+                var showSkullChance = Math.floor((Math.random() * 200 - 1) + 2);
+                if (skullVisible === 1) {
+                    skullSpeed++;
+                    if (skullSpeed === 3) {
+                        skullSpeed = 0;
+                        showSkull();
+                    }
+                    var timeNow = new Date();
+                    if (timeNow - skullApearanceTime > 5000) {
+                        skullVisible = 0;
+                        board[skull.x][skull.y] = foodMap[skull.x][skull.y];
+                    }
+                }
+                if (showSkullChance % 200 === 0) {
+                    skullApearanceTime = new Date();
+                    showSkull();
+                }
+                ghostMoveCounter++;
+                if (ghostMoveCounter === 6) {
+                    ghostMoveCounter = 0;
+                    if (starter === 0) {
+                        MoveGhost();
+                    }
+                }
+                checkGameOver();
+                GetKeyPressed();
+                countFoodInBoard();
+                board[shape.i][shape.j] = 0;
+                foodMap[shape.i][shape.j] = 0;
+                ghostScanboard_init[shape.i][shape.j] = 0;
+                drorSpeedController++;
+                if (drorSpeedController === drorSpeed) {
+                    drorSpeedController = 0;
+                    if (direction === 1) { //left
+                        if (shape.j >= 2 && board[shape.i][shape.j - 1] !== 4) {
+                            shape.j--;
+                        } else if (shape.j < 2 && board[shape.i][shape.j - 1] !== 4) {
+                            if (shape.j === 1) {
+                                shape.j = 0;
+                            } else if (shape.j === 0) {
+                                shape.j = BOARD_WIDTH - 1;
+                            }
+                        }
+                        pacmanMoved = 1;
+                    }
+                    if (direction === 2) { //right
+                        if (shape.j < BOARD_WIDTH - 1 && board[shape.i][shape.j + 1] !== 4) {
+                            shape.j++;
+                        } else if (shape.j === BOARD_WIDTH - 1 && board[shape.i][shape.j + 1] !== 4) {
+                            shape.j = 0;
+                        }
+                        pacmanMoved = 1;
+                    }
+                    if (direction === 3) { //up
+                        if (shape.i > 0 && board[shape.i - 1][shape.j] !== 4) {
+                            shape.i--;
+                        }
+                        pacmanMoved = 1;
+                    }
+                    if (direction === 4) { //down
+                        if (shape.i < BOARD_HEIGHT - 1 && board[shape.i + 1][shape.j] !== 4) {
+                            shape.i++;
+                        }
+                        pacmanMoved = 1;
+                    }
+                }
+                // if (board[shape.i][shape.j] === 1) {
+                //     score++;
+                // }
+                if (board[shape.i][shape.j] === 1) {
+                    score = score + 5;
+                    eatHatzir.play();
+                    foodCounter--;
+                    console.log(foodCounter);
+                }
+                if (board[shape.i][shape.j] === 8) {
+                    score = score + 15;
+                    foodCounter--;
+                    console.log(foodCounter);
+                }
+                if (board[shape.i][shape.j] === 9) {
+                    score = score + 25;
+                    tetet.play();
+                    foodCounter--;
+                    console.log(foodCounter);
+                }
+                if (catchedTheSkull_indication === 1 || board[shape.i][shape.j] === 10) {
+                    catchedTheSkull_indication = 0;
+                    catchedTheSkull.play();
+                    score = score + 50;
+                    skullVisible = 0;
+                    board[skull.x][skull.y] = foodMap[skull.x][skull.y];
+                }
+                board[shape.i][shape.j] = 2;
+                ghostScanboard_init[shape.i][shape.j] = 2;
+                var currentTime = new Date();
+                time_elapsed = (currentTime - start_time) / 1000;
+                time_elapsed = (time_elapsed - 3 * (4 - pacman_remain)).toFixed(3);
+                if (foodCounter === 0) {
+                    backgroundMusic.stop();
+                    gameCompleteSound.play();
+                    window.clearInterval(interval);
+                    gameStoped = 1;
+                    gameCompleted = 1;
+                    // Draw();
+                    // wait(500);
+                    // window.alert("Game completed");
+                }
+                if (gameOverIndication === 1 && pacman_remain > 1 && time_elapsed < timeLimit) {
+                    backgroundMusic.stop();
+                    killed_sound.play();
+                    starter = 3;
+                    respan_time = new Date();
+                    // window.alert("eaten by ghost");
+                    gameOverIndication = 0;
+                    pacman_remain--;
+                    score = score - 10;
+                    var emptyCell = findRandomEmptyCell(board);
+                    shape.i = emptyCell[0];
+                    shape.j = emptyCell[1];
+                    direction = 0;
+                    resetBoard();
+
+                }
+                showLives(pacman_remain);
+                if (gameOverIndication === 1 && pacman_remain === 1) {
+                    pacman_remain -= 2;
+                }
+                // if ((gameOverIndication === 1 && time_elapsed > timeLimit) || pacman_remain<1) {
+                if (pacman_remain < 0) {
+                    window.clearInterval(interval);
+                    gameStoped = 1;
+                    score = score - 10;
+                    lblScore.value = score;
+                    backgroundMusic.stop();
+                    gameOverSound.play();
+                    // Draw();
+                    // window.alert("Game Over");
+                }
+            }
+            Draw();
+        }
+
+
+        function showLives(pacman_remain) {
+            if (pacman_remain === 3) {
+                document.getElementById("life1").style.display = "inline";
+                document.getElementById("life2").style.display = "inline";
+                document.getElementById("life3").style.display = "inline";
+            } else if (pacman_remain === 2) {
+                document.getElementById("life1").style.display = "inline";
+                document.getElementById("life2").style.display = "inline";
+                document.getElementById("life3").style.display = "none";
+            } else if (pacman_remain === 1) {
+                document.getElementById("life1").style.display = "inline";
+                document.getElementById("life2").style.display = "none";
+                document.getElementById("life3").style.display = "none";
+            } else if (pacman_remain === 0) {
+                document.getElementById("life1").style.display = "none";
+                document.getElementById("life2").style.display = "none";
+                document.getElementById("life3").style.display = "none";
+            }
+        }
+
+        function getPossibleMoves(x, y, ghostBoard) {
+            var movesArray = new Array();
+
+            if (x > 0) {
+                if (ghostBoard[x - 1][y] != 4) {
+                    movesArray.push([x - 1, y]);
+                }
+            }
+            if (x < BOARD_HEIGHT - 1) {
+                if (ghostBoard[x + 1][y] != 4) {
+                    movesArray.push([x + 1, y]);
+                }
+            }
+            if (y > 0) {
+                if (ghostBoard[x][y - 1] != 4) {
+                    movesArray.push([x, y - 1]);
+                }
+            }
+            if (y < BOARD_WIDTH - 1) {
+                if (ghostBoard[x][y + 1] != 4) {
+                    movesArray.push([x, y + 1]);
+                }
+            }
+
+            return movesArray;
+        }
+
+        function calculate_ghost_path(ghostLoc) {
+            var gPath = ghostBFS(ghostLoc[0], ghostLoc[1], ghostScanboard_init);
+            return gPath;
+        }
+
+        function MoveGhost() {
+            //tmpBoard = copyArray(board);
+            for (let index = 0; index < ghostNum; index++) {
+                if (ghostArray[index] === 5) {
+                    ghost_1_path = [];
+                    ghost_1_path = calculate_ghost_path(ghost_1_loc);
+                    UpdateGhostPosition(ghostArray[index], ghost_1_path.pop(), ghost_1_loc);
+                } else if (ghostArray[index] === 6) {
+                    ghost_1_path = [];
+                    ghost_2_path = calculate_ghost_path(ghost_2_loc);
+                    UpdateGhostPosition(ghostArray[index], ghost_2_path.pop(), ghost_2_loc);
+                } else if (ghostArray[index] === 7) {
+                    ghost_1_path = [];
+                    ghost_3_path = calculate_ghost_path(ghost_3_loc);
+                    UpdateGhostPosition(ghostArray[index], ghost_3_path.pop(), ghost_3_loc);
+                }
+            }
+        }
+
+        function UpdateGhostPosition(gNum, gDest, gSrc) {
+            var randomMoveChance = Math.floor((Math.random() * 100 - 1) + 1);
+            if (randomMoveChance <= 20) {
+                posMoves = getPossibleMoves(gSrc[0], gSrc[1], ghostScanboard_init);
+                var randomIndex = Math.floor((Math.random() * posMoves.length - 1) + 1);
+                gDest.x = posMoves[randomIndex][0];
+                gDest.y = posMoves[randomIndex][1];
+            }
+            if (gNum === 5) {
+                //board[gSrc[0]][gSrc[1]] = ghost_1_prevValue;
+                //ghost_1_prevValue = board[gDest.x][gDest.y];
+                ghost_1_loc = [gDest.x, gDest.y];
+            } else if (gNum === 6) {
+                //board[gSrc[0]][gSrc[1]] = ghost_2_prevValue;
+                //ghost_2_prevValue = board[gDest.x][gDest.y];
+                ghost_2_loc = [gDest.x, gDest.y];
+            } else if (gNum === 7) {
+                //board[gSrc[0]][gSrc[1]] = foodMap[gSrc[0]][gSrc[1]];
+                //ghost_3_prevValue = board[gDest.x][gDest.y];
+                ghost_3_loc = [gDest.x, gDest.y];
+            }
+            board[gSrc[0]][gSrc[1]] = foodMap[gSrc[0]][gSrc[1]];
+            board[gDest.x][gDest.y] = gNum;
+        }
+
+        function ghostBFS(x, y, ghostScanboard) {
+            // Create a Queue and add our initial node in it
+            var scan = new Array();
+            var path = new Array();
+            var foundNode = new Object();
+            var found = 0;
+            var gScan = copyArray(ghostScanboard);
+            let q = new Array();
+            var srcNode = new Object();
+            srcNode.x = x;
+            srcNode.y = y;
+            srcNode.pred = null;
+            q.push(srcNode);
+            var i = x;
+            var j = y;
+            // Mark the first node as explored explored.
+            gScan[i][j] = 4;
+
+            // We'll continue till our queue gets empty
+            while (q.length > 0 && gScan[i][j] != 2 && !found) {
+                let t = q.shift();
+                i = t.x;
+                j = t.y;
+                // Log every element that comes out of the Queue
+                // console.log(t);
+                scan.push(t);
+                var posMoves = getPossibleMoves(i, j, gScan);
+                posMoves.forEach(function (entry) {
+                    if (gScan[entry[0]][entry[1]] === 2) {
+                        foundNode = new Object();
+                        foundNode.x = entry[0];
+                        foundNode.y = entry[1];
+                        foundNode.pred = t;
+                    } else {
+                        gScan[entry[0]][entry[1]] = 4;
+                    }
+                    var node = new Object();
+                    node.x = entry[0];
+                    node.y = entry[1];
+                    node.pred = t;
+                    q.push(node);
+                });
+            }
+            while (foundNode.pred != null) {
+                path.push(foundNode);
+                foundNode = foundNode.pred;
+            }
+            return path;
+        }
+
+        function copyArray(src) {
+            var dopArray = new Array();
+            for (var i = 0; i < BOARD_HEIGHT; i++) {
+                dopArray[i] = new Array();
+                for (var j = 0; j < BOARD_WIDTH; j++) {
+                    dopArray[i][j] = src[i][j];
+                }
+            }
+            return dopArray;
+        }
+
+        function Sound(src) {
+            this.sound = document.createElement("audio");
+            this.sound.src = src;
+            this.sound.setAttribute("preload", "auto");
+            this.sound.setAttribute("controls", "none");
+            this.sound.style.display = "none";
+            document.body.appendChild(this.sound);
+            this.play = function () {
+                this.sound.play();
+            }
+            this.stop = function () {
+                this.sound.pause();
+            }
+        }
+
+        function wait(ms) {
+            var start = new Date().getTime();
+            var end = start;
+            while (end < start + ms) {
+                end = new Date().getTime();
+            }
+        }
+
+    </script>
+
+</div>
+
+</body>
+
+</html>
