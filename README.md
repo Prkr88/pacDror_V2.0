@@ -10,9 +10,9 @@
 <br>
 <br>
 
-Launch Site at:
+Launch Game at:
 
-https://prkr88.github.io/InternetDevEx2_Pacman/
+https://prkr88.github.io/pacDror_V2.0/
 
 <br>
 <br>
