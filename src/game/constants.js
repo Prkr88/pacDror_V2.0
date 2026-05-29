@@ -84,8 +84,8 @@ export function buildGhostScan(maze) {
 export function getLevelConfig(level) {
   return {
     mazeIndex:     (level - 1) % MAZES.length,
-    ghostTickRate: Math.max(3, 7 - level),          // 6→5→4→3→3… ticks between moves
-    numBalls:      Math.min(130, 55 + level * 8),   // more food each level
-    ghostNum:      Math.min(3, Math.ceil(level / 2)), // 1→1→2→2→3→3…
+    ghostTickRate: Math.max(2, 9 - level),  // 8→7→6→5→4→3→2 ticks between moves
+    numBalls:      Math.min(130, 55 + level * 8),
+    ghostNum:      3,
   };
 }

@@ -1,3 +1,27 @@
+export function ghostBFSToTarget(sr, sc, scan, targetR, targetC) {
+  const gScan = scan.map(row => [...row]);
+  const queue = [{ r: sr, c: sc, pred: null }];
+  gScan[sr][sc] = 4;
+  let found = null;
+
+  while (queue.length > 0 && !found) {
+    const node = queue.shift();
+    for (const [mr, mc] of getPossibleMoves(node.r, node.c, gScan)) {
+      if (mr === targetR && mc === targetC) {
+        found = { r: mr, c: mc, pred: node };
+        break;
+      }
+      gScan[mr][mc] = 4;
+      queue.push({ r: mr, c: mc, pred: node });
+    }
+  }
+
+  const path = [];
+  let cur = found;
+  while (cur?.pred) { path.push(cur); cur = cur.pred; }
+  return path;
+}
+
 export function getPossibleMoves(r, c, board) {
   const moves = [];
   const H = board.length;

@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { MAZES, BOARD_WIDTH, BOARD_HEIGHT, getLevelConfig, buildGhostScan } from './constants';
-import { ghostBFS, getPossibleMoves } from './ghostAI';
+import { ghostBFS, ghostBFSToTarget, getPossibleMoves } from './ghostAI';
 import * as A from './assets';
 
 /* ============================================================
@@ -139,9 +139,15 @@ function drawFrame(canvasRef, s) {
         case 1:  ctx.drawImage(A.imgFood,     x, y, SIZE, SIZE); break;
         case 8:  ctx.drawImage(A.imgDiamond,  x, y, SIZE, SIZE); break;
         case 9:  ctx.drawImage(A.imgFoodSp,   x, y, SIZE, SIZE); break;
-        case 5:  ctx.drawImage(A.ghosts[0],   x, y, SIZE, SIZE); break;
-        case 6:  ctx.drawImage(A.ghosts[1],   x, y, SIZE, SIZE); break;
-        case 7:  ctx.drawImage(A.ghosts[2],   x, y, SIZE, SIZE); break;
+        case 5: case 6: case 7: {
+          const idx = cell - 5;
+          if (s.frightenedTicks > 0) {
+            ctx.globalAlpha = (s.frightenedTicks <= 60 && s.animSpeed % 10 < 5) ? 0.85 : 0.3;
+          }
+          ctx.drawImage(A.ghosts[idx], x, y, SIZE, SIZE);
+          ctx.globalAlpha = 1;
+          break;
+        }
         case 10: ctx.drawImage(A.imgSkull,    x, y, SIZE, SIZE); break;
         default: break;
       }
@@ -182,22 +188,22 @@ function movePacman(s) {
 
 function moveGhosts(s) {
   const defs = [
-    { id: 5, loc: s.ghost1Loc },
-    { id: 6, loc: s.ghost2Loc },
-    { id: 7, loc: s.ghost3Loc },
-  ].slice(0, s.ghostNum);
+    { id: 5, loc: s.ghost1Loc, home: [10, 8] },
+    { id: 6, loc: s.ghost2Loc, home: [10, 9] },
+    { id: 7, loc: s.ghost3Loc, home: [10, 10] },
+  ];
 
-  // Positions committed this move-step (prevents ghosts landing on each other)
   const committed = new Set();
-  // Pre-fill with current positions so no two ghosts target the same cell
   for (const g of defs) committed.add(`${g.loc[0]},${g.loc[1]}`);
 
   for (const g of defs) {
-    // Remove this ghost's own position from blocked set (it's about to leave)
     committed.delete(`${g.loc[0]},${g.loc[1]}`);
 
-    const path = ghostBFS(g.loc[0], g.loc[1], s.ghostScan);
-    let dr = g.loc[0], dc = g.loc[1]; // default: stay put
+    const path = s.frightenedTicks > 0
+      ? ghostBFSToTarget(g.loc[0], g.loc[1], s.ghostScan, g.home[0], g.home[1])
+      : ghostBFS(g.loc[0], g.loc[1], s.ghostScan);
+
+    let dr = g.loc[0], dc = g.loc[1];
 
     const tryMove = (candidates) => {
       const free = candidates.filter(([r,c]) => !committed.has(`${r},${c}`));
@@ -207,7 +213,7 @@ function moveGhosts(s) {
       return true;
     };
 
-    if (path.length > 0 && Math.random() >= 0.2) {
+    if (path.length > 0 && (s.frightenedTicks > 0 || Math.random() >= 0.2)) {
       const next = path[path.length - 1];
       if (!committed.has(`${next.r},${next.c}`)) {
         dr = next.r; dc = next.c;
@@ -248,9 +254,10 @@ function respawnPlayer(s) {
       if (s.ghostScan[i][j] === 2) s.ghostScan[i][j] = 0;
     }
   s.ghost1Loc = [10,8];  s.board[10][8]  = 5;
-  if (s.ghostNum > 1) { s.ghost2Loc = [10,9];  s.board[10][9]  = 6; }
-  if (s.ghostNum > 2) { s.ghost3Loc = [10,10]; s.board[10][10] = 7; }
+  s.ghost2Loc = [10,9];  s.board[10][9]  = 6;
+  s.ghost3Loc = [10,10]; s.board[10][10] = 7;
   s.ghostScan[s.shape.i][s.shape.j] = 2;
+  s.frightenedTicks = 0;
 }
 
 /* ============================================================
@@ -271,9 +278,9 @@ function initLevelState(level, score, lives, SIZE) {
   board[pi][pj]  = 2;
   ghostScan[pi][pj] = 2;
 
-  board[10][8] = 5;
-  if (cfg.ghostNum > 1) board[10][9]  = 6;
-  if (cfg.ghostNum > 2) board[10][10] = 7;
+  board[10][8]  = 5;
+  board[10][9]  = 6;
+  board[10][10] = 7;
 
   return {
     board, foodMap, ghostScan,
@@ -295,6 +302,7 @@ function initLevelState(level, score, lives, SIZE) {
     ghostTick:       0,
     ghostTickRate:   cfg.ghostTickRate,
     ghostNum:        cfg.ghostNum,
+    frightenedTicks: 0,
     keysDown:        {},
     level,
     lives,
@@ -380,12 +388,29 @@ export function useGame() {
     s.ghostTick++;
     if (s.ghostTick >= s.ghostTickRate) { s.ghostTick = 0; moveGhosts(s); }
 
+    // Frightened timer
+    if (s.frightenedTicks > 0) s.frightenedTicks--;
+
     // Ghost collision
-    if (
-      (s.ghost1Loc[0] === s.shape.i && s.ghost1Loc[1] === s.shape.j) ||
-      (s.ghostNum > 1 && s.ghost2Loc[0] === s.shape.i && s.ghost2Loc[1] === s.shape.j) ||
-      (s.ghostNum > 2 && s.ghost3Loc[0] === s.shape.i && s.ghost3Loc[1] === s.shape.j)
-    ) s.gameOverFlag = 1;
+    const ghostCollDefs = [
+      { loc: s.ghost1Loc, id: 5, home: [10, 8] },
+      { loc: s.ghost2Loc, id: 6, home: [10, 9] },
+      { loc: s.ghost3Loc, id: 7, home: [10, 10] },
+    ];
+    for (const g of ghostCollDefs) {
+      if (g.loc[0] === s.shape.i && g.loc[1] === s.shape.j) {
+        if (s.frightenedTicks > 0) {
+          s.score += 200;
+          A.sounds.skull.play();
+          s.board[g.loc[0]][g.loc[1]] = s.foodMap[g.loc[0]][g.loc[1]];
+          g.loc[0] = g.home[0];
+          g.loc[1] = g.home[1];
+          s.board[g.home[0]][g.home[1]] = g.id;
+        } else {
+          s.gameOverFlag = 1;
+        }
+      }
+    }
 
     // Keyboard
     const kd = s.keysDown;
@@ -413,6 +438,7 @@ export function useGame() {
       s.score += 50;
       s.skullVisible = 0;
       s.board[s.skull.x][s.skull.y] = s.foodMap[s.skull.x][s.skull.y];
+      s.frightenedTicks = 200;
     }
 
     s.board[s.shape.i][s.shape.j]     = 2;
