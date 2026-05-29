@@ -3,7 +3,7 @@ import Hud from './Hud';
 import DPad from './DPad';
 
 export default function GameScreen({ game }) {
-  const { canvasRef, hud, phase, startGame, setDirection } = game;
+  const { canvasRef, hud, phase, startGame, setDirection, togglePause } = game;
   const started    = useRef(false);
   const touchStart = useRef({ x: 0, y: 0 });
 
@@ -28,7 +28,7 @@ export default function GameScreen({ game }) {
 
   return (
     <div className="game-screen">
-      <Hud hud={hud} phase={phase} onRestart={startGame} />
+      <Hud hud={hud} phase={phase} onRestart={startGame} onPause={togglePause} />
 
       <div className="canvas-wrap">
         <canvas
@@ -40,8 +40,17 @@ export default function GameScreen({ game }) {
         {phase === 'levelup' && (
           <div className="level-up-overlay">
             <div className="level-up-box">
-              <div className="level-up-title">⭐ Level {hud.level} Complete!</div>
+              <div className="level-up-title">Level {hud.level} Complete!</div>
               <div className="level-up-sub">Get ready for Level {hud.level + 1}…</div>
+            </div>
+          </div>
+        )}
+
+        {phase === 'paused' && (
+          <div className="level-up-overlay paused-overlay" onClick={togglePause}>
+            <div className="level-up-box">
+              <div className="level-up-title">⏸ Paused</div>
+              <div className="level-up-sub">Tap / press P to resume</div>
             </div>
           </div>
         )}

@@ -179,10 +179,23 @@ button:focus-visible { outline: 2px solid var(--c-gold); outline-offset: 2px; }
 .hud-phase-tag[data-phase="victory"] { background: var(--c-green); color: #000; }
 .hud-phase-tag[data-phase="gameover"]{ background: var(--c-red);   color: #fff; }
 
+.hud-pause {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: rgba(255,255,255,0.13);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.28);
+  border-radius: var(--radius-xl);
+  transition: background 0.12s, transform 0.1s;
+}
+.hud-pause:hover  { background: rgba(255,255,255,0.22); }
+.hud-pause:active { transform: scale(0.95); }
+
 .hud-restart {
   margin-left: auto;
-  padding: 0.3rem 0.9rem;
-  font-size: 0.8rem;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.9rem;
   font-weight: 700;
   background: var(--c-blue);
   color: white;
@@ -192,6 +205,8 @@ button:focus-visible { outline: 2px solid var(--c-gold); outline-offset: 2px; }
 }
 .hud-restart:hover  { background: #2563eb; }
 .hud-restart:active { transform: scale(0.95); }
+
+.paused-overlay { cursor: pointer; }
 
 /* =================== CANVAS =================== */
 .canvas-wrap {

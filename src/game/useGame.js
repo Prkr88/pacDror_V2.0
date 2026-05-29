@@ -325,6 +325,7 @@ export function useGame() {
   const canvasRef   = useRef(null);
   const stateRef    = useRef(null);
   const intervalRef = useRef(null);
+  const pausedRef   = useRef(false);
 
   const [hud,   setHud]   = useState({ score: 0, lives: 3, time: 0, level: 1 });
   const [phase, setPhase] = useState('idle'); // idle | playing | levelup | gameover
@@ -338,6 +339,7 @@ export function useGame() {
     applyCanvasSize(canvasRef, size);
 
     stateRef.current = initLevelState(1, 0, 3, size);
+    pausedRef.current = false;
     setHud({ score: 0, lives: 3, time: 0, level: 1 });
     setPhase('playing');
     A.sounds.bg.play();
@@ -353,6 +355,7 @@ export function useGame() {
     applyCanvasSize(canvasRef, size);
 
     stateRef.current = initLevelState(nextLevel, prevScore, prevLives, size);
+    pausedRef.current = false;
     setHud({ score: prevScore, lives: prevLives, time: 0, level: nextLevel });
     setPhase('playing');
     A.sounds.bg.play();
@@ -447,7 +450,7 @@ export function useGame() {
     s.timeElapsed = (Date.now() - s.startTime) / 1000 - 3 * (4 - s.lives);
 
     // ── Level complete — advance instead of ending ─────────
-    if (s.foodCounter <= 0) {
+    if (countFood(s.foodMap) <= 0) {
       A.sounds.bg.stop();
       A.sounds.complete.play();
       clearInterval(intervalRef.current);
@@ -468,7 +471,7 @@ export function useGame() {
       s.gameOverFlag = 0;
       s.lives--;
       s.score = Math.max(0, s.score - 10);
-      const [ei, ej] = findPassableCell(s.board);
+      const [ei, ej] = findSpawnCell(s.board);
       s.shape.i = ei; s.shape.j = ej;
       s.direction = 0;
       respawnPlayer(s);
@@ -493,14 +496,35 @@ export function useGame() {
     drawFrame(canvasRef, s);
   }, [advanceLevel]);
 
+  // ── Pause ─────────────────────────────────────────────────
+  const togglePause = useCallback(() => {
+    const s = stateRef.current;
+    if (!s || s.gameOverFinal) return;
+    if (!pausedRef.current) {
+      pausedRef.current = true;
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+      A.sounds.bg.stop();
+      setPhase('paused');
+    } else {
+      pausedRef.current = false;
+      A.sounds.bg.play();
+      setPhase('playing');
+      intervalRef.current = setInterval(tick, 50);
+    }
+  }, [tick]);
+
   // ── Keyboard listeners ────────────────────────────────────
   useEffect(() => {
-    const dn = e => { if (stateRef.current) stateRef.current.keysDown[e.code] = true; };
+    const dn = e => {
+      if (stateRef.current) stateRef.current.keysDown[e.code] = true;
+      if (e.code === 'Escape' || e.code === 'KeyP') togglePause();
+    };
     const up = e => { if (stateRef.current) stateRef.current.keysDown[e.code] = false; };
     window.addEventListener('keydown', dn);
     window.addEventListener('keyup',   up);
     return () => { window.removeEventListener('keydown', dn); window.removeEventListener('keyup', up); };
-  }, []);
+  }, [togglePause]);
 
   // ── Resize ────────────────────────────────────────────────
   useEffect(() => {
@@ -528,5 +552,5 @@ export function useGame() {
     s.drorMotionIndex = dir;
   }, []);
 
-  return { canvasRef, hud, phase, startGame, setDirection };
+  return { canvasRef, hud, phase, startGame, setDirection, togglePause };
 }

@@ -1,4 +1,4 @@
-export default function Hud({ hud, phase, onRestart }) {
+export default function Hud({ hud, phase, onRestart, onPause }) {
   const { score, lives, time, level } = hud;
 
   return (
@@ -28,10 +28,16 @@ export default function Hud({ hud, phase, onRestart }) {
       </div>
 
       {phase === 'gameover' && (
-        <span className="hud-phase-tag" data-phase="gameover">💀 Game Over</span>
+        <span className="hud-phase-tag" data-phase="gameover">Game Over</span>
       )}
 
-      <button className="hud-restart" onClick={onRestart}>↺ Restart</button>
+      {(phase === 'playing' || phase === 'paused') && (
+        <button className="hud-pause" onClick={onPause} aria-label={phase === 'paused' ? 'Resume' : 'Pause'}>
+          {phase === 'paused' ? '▶' : '⏸'}
+        </button>
+      )}
+
+      <button className="hud-restart" onClick={onRestart}>↺</button>
     </header>
   );
 }
