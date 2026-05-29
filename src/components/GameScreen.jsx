@@ -7,6 +7,7 @@ export default function GameScreen({ game }) {
   const started    = useRef(false);
   const touchStart = useRef({ x: 0, y: 0 });
 
+  // Start game once after mount so canvas has layout dimensions
   useEffect(() => {
     if (started.current) return;
     started.current = true;
@@ -36,8 +37,6 @@ export default function GameScreen({ game }) {
           onTouchEnd={onTouchEnd}
         />
 
-        <DPad setDirection={setDirection} />
-
         {phase === 'levelup' && (
           <div className="level-up-overlay">
             <div className="level-up-box">
@@ -56,6 +55,8 @@ export default function GameScreen({ game }) {
           </div>
         )}
       </div>
+
+      <DPad setDirection={setDirection} />
     </div>
   );
 }
