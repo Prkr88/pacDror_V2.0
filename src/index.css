@@ -262,3 +262,45 @@ canvas {
   .dpad-btn, .dpad-center { width: 68px; height: 68px; }
 }
 
+
+/* =================== ANIMATIONS =================== */
+@keyframes fadeIn  { from { opacity: 0 }    to { opacity: 1 } }
+@keyframes scaleIn { from { transform: scale(0.85); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+@keyframes slideUp { from { transform: translateY(16px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+
+/* =================== LEVEL-UP OVERLAY =================== */
+.canvas-wrap { position: relative; }
+
+.level-up-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.55);
+  animation: fadeIn 0.3s;
+}
+
+.level-up-box {
+  background: linear-gradient(135deg, #1a3a1a, #0f2a0f);
+  border: 3px solid var(--c-gold);
+  border-radius: 1.25rem;
+  padding: 1.5rem 2.5rem;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(245,197,24,0.4);
+  animation: scaleIn 0.3s ease-out;
+}
+
+.level-up-title {
+  font-size: clamp(1.25rem, 5vw, 2rem);
+  font-weight: 900;
+  color: var(--c-gold);
+  margin-bottom: 0.5rem;
+}
+
+.level-up-sub {
+  font-size: clamp(0.875rem, 3vw, 1.1rem);
+  color: rgba(255,255,255,0.8);
+}
+
+.hud-level { color: var(--c-gold); font-weight: 900; font-size: 1.1rem; }
