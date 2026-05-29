@@ -1,0 +1,264 @@
+@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+
+/* =============================================
+   PacDror V2 — Global styles
+   No framework, CSS variables + modern layout
+   ============================================= */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --c-gold:       #f5c518;
+  --c-gold-dark:  #9a8000;
+  --c-blue:       #1a6bcc;
+  --c-dark:       #111827;
+  --c-surface:    #1f2937;
+  --c-text:       #f9fafb;
+  --c-muted:      rgba(255,255,255,0.55);
+  --c-green:      #22c55e;
+  --c-red:        #ef4444;
+  --c-dpad-bg:    rgba(255,255,255,0.85);
+  --c-dpad-press: rgba(100,220,130,0.92);
+  --font:         'Varela Round', system-ui, sans-serif;
+  --radius-lg:    1rem;
+  --radius-xl:    9999px;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: var(--font);
+  background: var(--c-dark);
+  color: var(--c-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font-family: var(--font); cursor: pointer; }
+button:focus-visible { outline: 2px solid var(--c-gold); outline-offset: 2px; }
+
+/* =================== APP SHELL =================== */
+.app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =================== WELCOME SCREEN =================== */
+.welcome {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.welcome-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  filter: brightness(0.55);
+}
+
+.welcome-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+.welcome-title {
+  font-size: clamp(3rem, 13vw, 6rem);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  background: linear-gradient(160deg, #fff176 30%, var(--c-gold) 60%, var(--c-gold-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.6));
+}
+
+.welcome-sub {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.75);
+  letter-spacing: 0.05em;
+}
+
+.welcome-play-btn {
+  padding: 1rem 3.5rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  background: linear-gradient(135deg, var(--c-gold) 0%, var(--c-gold-dark) 100%);
+  color: #000;
+  border: none;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 6px 24px rgba(245,197,24,0.45);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.welcome-play-btn:hover  { transform: scale(1.05); box-shadow: 0 8px 30px rgba(245,197,24,0.6); }
+.welcome-play-btn:active { transform: scale(0.97); }
+
+.welcome-controls {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.65);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* =================== GAME SCREEN =================== */
+.game-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: linear-gradient(180deg, #FFF65C 40%, #9A8000 100%);
+  touch-action: none;
+}
+
+/* =================== HUD =================== */
+.hud {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.4rem 0.8rem;
+  background: rgba(0,0,0,0.72);
+  backdrop-filter: blur(8px);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.hud-group {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.hud-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--c-muted);
+  text-transform: uppercase;
+}
+
+.hud-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--c-text);
+  min-width: 2.5rem;
+}
+
+.hud-lives {
+  display: flex;
+  gap: 2px;
+  font-size: 1.1rem;
+}
+
+.life-heart {
+  color: var(--c-red);
+  transition: opacity 0.3s;
+}
+
+.hud-phase-tag {
+  font-size: 0.875rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-xl);
+}
+.hud-phase-tag[data-phase="victory"] { background: var(--c-green); color: #000; }
+.hud-phase-tag[data-phase="gameover"]{ background: var(--c-red);   color: #fff; }
+
+.hud-restart {
+  margin-left: auto;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: var(--c-blue);
+  color: white;
+  border: none;
+  border-radius: var(--radius-xl);
+  transition: background 0.15s, transform 0.1s;
+}
+.hud-restart:hover  { background: #2563eb; }
+.hud-restart:active { transform: scale(0.95); }
+
+/* =================== CANVAS =================== */
+.canvas-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  min-height: 0; /* allow flex shrink */
+}
+
+canvas {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  touch-action: none;
+}
+
+/* =================== D-PAD =================== */
+.dpad-wrap {
+  display: none;   /* hidden on mouse-pointer devices */
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0 0.75rem;
+  flex-shrink: 0;
+}
+
+@media (pointer: coarse) {
+  .dpad-wrap { display: flex; }
+}
+
+.dpad {
+  display: grid;
+  grid-template-areas:
+    ". up ."
+    "left center right"
+    ". down .";
+  gap: 5px;
+}
+
+.dpad-btn {
+  width: 58px;
+  height: 58px;
+  background: var(--c-dpad-bg);
+  border: 2px solid rgba(0,0,0,0.2);
+  border-radius: 13px;
+  font-size: 1.4rem;
+  display: grid;
+  place-items: center;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.22);
+  transition: background 0.07s, transform 0.07s;
+}
+.dpad-btn:active { background: var(--c-dpad-press); transform: scale(0.91); }
+
+.dpad-center {
+  width: 58px;
+  height: 58px;
+  background: rgba(0,0,0,0.08);
+  border-radius: 10px;
+}
+
+@media (min-width: 480px) and (pointer: coarse) {
+  .dpad-btn, .dpad-center { width: 68px; height: 68px; }
+}
+
