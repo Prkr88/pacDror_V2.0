@@ -11,22 +11,19 @@ export default function DPad({ setDirection }) {
   const handleDir = useCallback((dir) => setDirection(dir), [setDirection]);
 
   return (
-    <div className="dpad-wrap">
-      <div className="dpad">
-        {DIRS.map(({ id, dir, label, area }) => (
-          <button
-            key={id}
-            className="dpad-btn"
-            style={{ gridArea: area }}
-            aria-label={`Move ${id}`}
-            onTouchStart={e => { e.preventDefault(); handleDir(dir); }}
-            onMouseDown={() => handleDir(dir)}
-          >
-            {label}
-          </button>
-        ))}
-        <div className="dpad-center" style={{ gridArea: 'center' }} />
-      </div>
+    <div className="dpad-overlay">
+      {DIRS.map(({ id, dir, label, area }) => (
+        <button
+          key={id}
+          className="dpad-btn"
+          style={{ gridArea: area }}
+          aria-label={`Move ${id}`}
+          onTouchStart={e => { e.preventDefault(); handleDir(dir); }}
+          onMouseDown={e => { e.preventDefault(); handleDir(dir); }}
+        >
+          {label}
+        </button>
+      ))}
     </div>
   );
 }

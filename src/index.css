@@ -135,7 +135,15 @@ button:focus-visible { outline: 2px solid var(--c-gold); outline-offset: 2px; }
   background: rgba(0,0,0,0.72);
   backdrop-filter: blur(8px);
   flex-shrink: 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 480px) {
+  .hud { gap: 0.5rem; padding: 0.3rem 0.5rem; }
+  .hud-label { display: none; }
+  .hud-value { font-size: 0.85rem; min-width: 1.8rem; }
+  .hud-lives { font-size: 0.85rem; }
+  .hud-level { font-size: 0.9rem; }
 }
 
 .hud-group {
@@ -226,56 +234,41 @@ canvas {
   touch-action: none;
 }
 
-/* =================== D-PAD =================== */
-.dpad-wrap {
-  display: none;   /* hidden on mouse-pointer devices */
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 0 0.75rem;
-  flex-shrink: 0;
+/* =================== D-PAD OVERLAY =================== */
+.dpad-overlay {
+  position: absolute;
+  inset: 0;
+  display: none;
+  grid-template-areas:
+    ". up ."
+    "left . right"
+    ". down .";
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  z-index: 1;
+  pointer-events: none;
 }
 
 @media (pointer: coarse) {
-  .dpad-wrap { display: flex; }
-}
-
-.dpad {
-  display: grid;
-  grid-template-areas:
-    ". up ."
-    "left center right"
-    ". down .";
-  gap: 5px;
+  .dpad-overlay { display: grid; }
 }
 
 .dpad-btn {
-  width: 58px;
-  height: 58px;
-  background: var(--c-dpad-bg);
-  border: 2px solid rgba(0,0,0,0.2);
-  border-radius: 13px;
-  font-size: 1.4rem;
+  pointer-events: all;
+  background: rgba(0, 0, 0, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0;
+  font-size: clamp(1.1rem, 5vw, 1.8rem);
+  color: rgba(255, 255, 255, 0.4);
   display: grid;
   place-items: center;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.22);
-  transition: background 0.07s, transform 0.07s;
+  transition: background 0.07s, color 0.07s;
 }
-.dpad-btn:active { background: var(--c-dpad-press); transform: scale(0.91); }
-
-.dpad-center {
-  width: 58px;
-  height: 58px;
-  background: rgba(0,0,0,0.08);
-  border-radius: 10px;
-}
-
-@media (min-width: 480px) and (pointer: coarse) {
-  .dpad-btn, .dpad-center { width: 68px; height: 68px; }
-}
+.dpad-btn:active { background: rgba(0, 0, 0, 0.32); color: rgba(255,255,255,0.9); }
 
 
 /* =================== ANIMATIONS =================== */
@@ -294,6 +287,7 @@ canvas {
   justify-content: center;
   background: rgba(0,0,0,0.55);
   animation: fadeIn 0.3s;
+  z-index: 2;
 }
 
 .level-up-box {

@@ -77,11 +77,9 @@ function calcSize(canvasRef) {
   const wrap = canvasRef.current?.parentElement;
   if (!wrap) return 28;
   const { width, height } = wrap.getBoundingClientRect();
-  const isMobile = window.innerWidth <= 768;
-  const dpadH    = isMobile ? 215 : 0;
   return Math.max(14, Math.min(
     Math.floor(width  / BOARD_WIDTH),
-    Math.floor((height - dpadH) / BOARD_HEIGHT),
+    Math.floor(height / BOARD_HEIGHT),
   ));
 }
 
